@@ -1,0 +1,93 @@
+﻿@{
+	Layout = "";
+	MroomInfo item = ViewBag.item;
+	var fk_mroomtags = Mroomtag.Select.ToList();
+	var fk_Mtypes = Mtype.Select.ToList();
+}
+
+<div class="box">
+	<div class="box-header with-border">
+		<h3 class="box-title" id="box-title"></h3>
+	</div>
+	<div class="box-body">
+		<div class="table-responsive">
+			<form id="form_add" method="post">
+				@Html.AntiForgeryToken()
+				<input type="hidden" name="__callback" value="edit_callback" />
+				<div>
+					<table cellspacing="0" rules="all" class="table table-bordered table-hover" border="1" style="border-collapse:collapse;">
+						@if (item != null) {
+							<tr>
+								<td>id</td>
+								<td><input name="Id" type="text" readonly class="datepicker" style="width:20%;background-color:#ddd;" /></td>
+							</tr>
+						}
+						<tr>
+							<td>分类</td>
+							<td id="Mtype_id_td"></td>
+						</tr>
+						<tr>
+							<td>会议室名称</td>
+							<td><input name="Name" type="text" class="datepicker" style="width:60%;" /></td>
+						</tr>
+						<tr>
+							<td>容纳人数</td>
+							<td><input name="Number" type="text" class="form-control" data-inputmask="'mask': '9', 'repeat': 6, 'greedy': false" data-mask style="width:200px;" /></td>
+						</tr>
+						<tr>
+							<td>描述</td>
+							<td><textarea name="Reason" style="width:100%;height:100px;" editor="ueditor"></textarea></td>
+						</tr>
+						<tr>
+							<td>状态</td>
+							<td>
+								<select name="State"><option value="">------ 请选择 ------</option>
+									@foreach (object eo in Enum.GetValues(typeof(Et_mroomstateENUM))) { <option value="@eo">@eo</option> }
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>username</td>
+							<td><input name="Username" type="text" class="datepicker" style="width:60%;" /></td>
+						</tr>
+						<tr>
+							<td>mroomtag</td>
+							<td>
+								<select name="mn_Mroomtag" data-placeholder="Select a mroomtag" class="form-control select2" multiple>
+									@foreach (MroomtagInfo fk in fk_mroomtags) { <option value="@fk.Id">@fk.Name</option> }
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="8%">&nbsp</td>
+							<td><input type="submit" value="@(item == null ? "添加" : "更新")" />&nbsp;<input type="button" value="取消" /></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	(function () {
+		top.edit_callback = function (rt) {
+			if (rt.success) return top.mainViewNav.goto('./');
+			alert(rt.message);
+		};
+
+		$('#Mtype_id_td').html(yieldTreeSelect(yieldTreeArray(@Html.Json(fk_Mtypes), null, 'Id', 'Parent_id'), '{#Name}', 'Id')).find('select').attr('name', 'Mtype_id');
+		var form = $('#form_add')[0];
+		var item = null;
+		@if (item != null) {
+			<text>
+			item = @Html.Json(item);
+			fillForm(form, item);
+			item.mn_Mroomtag = @Html.Json(item.Obj_mroomtags);
+			for (var a = 0; a < item.mn_Mroomtag.length; a++) $(form.mn_Mroomtag).find('option[value="{0}"]'.format(item.mn_Mroomtag[a].Id)).attr('selected', 'selected');
+			</text>
+		}
+		top.mainViewInit();
+	})();
+</script>
