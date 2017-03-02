@@ -24,6 +24,8 @@ gulp.task('copy-module', ['clean-module'], function () {
             .pipe(gulp.dest(paths.hostModule + module.fullName));
         gulp.src(paths.devModule + module.fullName + '/bin/Debug/netstandard1.6/**/*.*')
             .pipe(gulp.dest(paths.hostModule + module.fullName + '/bin'));
+        gulp.src(paths.devModule + module.fullName + '/appsettings.json')
+            .pipe(gulp.dest(paths.hostModule + module.fullName));
         gulp.src(paths.devModule + module.fullName + '/wwwroot/**/*.*')
             .pipe(gulp.dest(paths.hostWwwrootModules + module.name));
     });
@@ -42,14 +44,20 @@ function loadModules() {
 	var moduleManifestPaths,
         modules = [];
 
-	moduleManifestPaths = glob.sync(paths.devModule + 'aaa.Module.*/project.json', {});
+	moduleManifestPaths = glob.sync(paths.devModule + '*/project.json', {});
 	moduleManifestPaths.forEach(function (moduleManifestPath) {
-		var reg = /\/aaa\.Module\.([^\/]+)\/project\.json/.exec(moduleManifestPath);
+		var reg = /\/([^\/]+)\/project\.json/.exec(moduleManifestPath);
 		var moduleManifest = {
 			name: reg[1],
-			fullName: "aaa.Module." + reg[1],
+			fullName: reg[1],
 			version: "1.0.0"
 		}
+
+		//var exec = require('child_process').exec;
+		//var child = exec('echo hello ' + name, function (err, stdout, stderr) {
+		//	if (err) throw err;
+		//	console.log(stdout);
+		//});
 
 		modules.push(moduleManifest);
 	});
