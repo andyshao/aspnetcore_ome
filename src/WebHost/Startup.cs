@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Razor;
 using NLog.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace aaa.WebHost {
 	public class Startup {
@@ -67,7 +65,7 @@ namespace aaa.WebHost {
 			aaa.DAL.PSqlHelper.Instance.Log = loggerFactory.CreateLogger("aaa_DAL_sqlhelper");
 
 			app.UseSession();
-			app.UseCustomizedMvc();
+			app.UseMvc();
 			app.UseCustomizedStaticFiles(Modules);
 		}
 	}

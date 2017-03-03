@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.Razor;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Razor;
 
 public class ModuleViewLocationExpander : IViewLocationExpander {
 	private const string _moduleKey = "module";

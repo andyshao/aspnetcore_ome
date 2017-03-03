@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 
-public static class ConfigurationBuilderExtensions {
+public static class StarupExtensions {
 	public static ConfigurationBuilder LoadInstalledModules(this ConfigurationBuilder build, IList<ModuleInfo> modules, IHostingEnvironment env) {
 		var moduleRootFolder = new DirectoryInfo(Path.Combine(env.ContentRootPath, "Module"));
 		var moduleFolders = moduleRootFolder.GetDirectories();
@@ -50,5 +57,44 @@ public static class ConfigurationBuilderExtensions {
 			}
 		}
 		return build;
+	}
+
+	public static IApplicationBuilder UseCustomizedStaticFiles(this IApplicationBuilder app, IList<ModuleInfo> modules) {
+		app.UseDefaultFiles();
+		app.UseStaticFiles(new StaticFileOptions() {
+			OnPrepareResponse = (context) => {
+				var headers = context.Context.Response.GetTypedHeaders();
+				headers.CacheControl = new CacheControlHeaderValue() {
+					Public = true,
+					MaxAge = TimeSpan.FromDays(60)
+				};
+			}
+		});
+		return app;
+	}
+
+	public static IServiceCollection AddCustomizedMvc(this IServiceCollection services, IList<ModuleInfo> modules) {
+		var mvcBuilder = services.AddMvc()
+			.AddRazorOptions(o => {
+				foreach (var module in modules) {
+					var a = MetadataReference.CreateFromFile(module.Assembly.Location);
+					o.AdditionalCompilationReferences.Add(a);
+				}
+			})
+			.AddViewLocalization()
+			.AddDataAnnotationsLocalization();
+
+		foreach (var module in modules) {
+			mvcBuilder.AddApplicationPart(module.Assembly);
+
+			var moduleInitializerType =
+				module.Assembly.GetTypes().FirstOrDefault(x => typeof(IModuleInitializer).IsAssignableFrom(x));
+			if ((moduleInitializerType != null) && (moduleInitializerType != typeof(IModuleInitializer))) {
+				var moduleInitializer = (IModuleInitializer)Activator.CreateInstance(moduleInitializerType);
+				moduleInitializer.Init(services);
+			}
+		}
+
+		return services;
 	}
 }
