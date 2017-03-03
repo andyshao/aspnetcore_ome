@@ -18,7 +18,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "aaa.db", "src\aaa.db\aaa.db
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module", "Module", "{86D85798-15BE-49BA-8D5A-81D056F8B7FB}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ModuleBase", "src\ModuleBase\ModuleBase.xproj", "{5E533A45-D49F-40B8-96CD-FB9D02412652}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Infrastructure", "src\Infrastructure\Infrastructure.xproj", "{5E533A45-D49F-40B8-96CD-FB9D02412652}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebHost", "src\WebHost\WebHost.xproj", "{5E533A45-D40F-40B8-96CD-FC9D02412652}"
 EndProject

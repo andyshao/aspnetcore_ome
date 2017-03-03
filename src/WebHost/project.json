@@ -18,7 +18,7 @@
 		"System.Text.Encoding.CodePages": "4.0.1",
 		"Swashbuckle.AspNetCore.SwaggerGen": "1.0.0-*",
 		"Swashbuckle.AspNetCore.SwaggerUi": "1.0.0-*",
-		"ModuleBase": "1.0.0-*"
+		"Infrastructure": "1.0.0-*"
 	},
 
 	"tools": {

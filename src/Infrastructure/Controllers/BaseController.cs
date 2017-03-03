@@ -11,68 +11,64 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using aaa.BLL;
-using aaa.Model;
 
-namespace aaa.Module {
-	public partial class BaseController : Controller {
-		public ILogger _logger;
-		public ISession Session { get { return HttpContext.Session; } }
-		public HttpRequest Req { get { return Request; } }
-		public HttpResponse Res { get { return Response; } }
+public partial class BaseController : Controller {
+	public ILogger _logger;
+	public ISession Session { get { return HttpContext.Session; } }
+	public HttpRequest Req { get { return Request; } }
+	public HttpResponse Res { get { return Response; } }
 
-		//public SysuserInfo LoginUser { get; private set; }
-		public BaseController(ILogger logger) { _logger = logger; }
-		public override void OnActionExecuting(ActionExecutingContext context) {
-			#region 参数验证
-			if (context.ModelState.IsValid == false)
-				foreach(var value in context.ModelState.Values)
-					if (value.Errors.Any()) {
-						context.Result = APIReturn.参数格式不正确.SetMessage($"参数格式不正确：{value.Errors.First().ErrorMessage}");
-						return;
-					}
-			#endregion
-			#region 初始化当前登陆账号
-			//string username = Session.GetString("login.username");
-			//if (!string.IsNullOrEmpty(username)) LoginUser = Sysuser.GetItemByUsername(username);
-
-			//var method = (context.ActionDescriptor as ControllerActionDescriptor).MethodInfo;
-			//if (method.GetCustomAttribute<需要登陆Attribute>() != null && LoginUser == null)
-			//	context.Result = new RedirectResult("/signin");
-			//else if (method.GetCustomAttribute<匿名访问Attribute>() == null && LoginUser == null)
-			//	context.Result = new RedirectResult("/signin");
-			//ViewBag.user = LoginUser;
-			#endregion
-			base.OnActionExecuting(context);
-		}
-		public override void OnActionExecuted(ActionExecutedContext context) {
-			if (context.Exception != null) {
-				#region 错误拦截，在这里记录日志
-				//this.Json(new APIReturn(-1, context.Exception.Message)).ExecuteResultAsync(context).Wait();
-				//context.Exception = null;
-				#endregion
-			}
-			base.OnActionExecuted(context);
-		}
-
-		#region 角色权限验证
-		//public bool sysrole_check(string url) {
-		//	url = url.ToLower();
-		//	//Response.Write(url + "<br>");
-		//	if (url == "/" || url.IndexOf("/default.aspx") == 0) return true;
-		//	foreach(var role in this.LoginUser.Obj_sysroles) {
-		//		//Response.Write(role.ToString());
-		//		foreach(var dir in role.Obj_sysdirs) {
-		//			//Response.Write("-----------------" + dir.ToString() + "<br>");
-		//			string tmp = dir.Url;
-		//			if (tmp.EndsWith("/")) tmp += "default.aspx";
-		//			if (url.IndexOf(tmp) == 0) return true;
-		//		}
-		//	}
-		//	return false;
-		//}
+	//public SysuserInfo LoginUser { get; private set; }
+	public BaseController(ILogger logger) { _logger = logger; }
+	public override void OnActionExecuting(ActionExecutingContext context) {
+		#region 参数验证
+		if (context.ModelState.IsValid == false)
+			foreach (var value in context.ModelState.Values)
+				if (value.Errors.Any()) {
+					context.Result = APIReturn.参数格式不正确.SetMessage($"参数格式不正确：{value.Errors.First().ErrorMessage}");
+					return;
+				}
 		#endregion
+		#region 初始化当前登陆账号
+		//string username = Session.GetString("login.username");
+		//if (!string.IsNullOrEmpty(username)) LoginUser = Sysuser.GetItemByUsername(username);
+
+		//var method = (context.ActionDescriptor as ControllerActionDescriptor).MethodInfo;
+		//if (method.GetCustomAttribute<需要登陆Attribute>() != null && LoginUser == null)
+		//	context.Result = new RedirectResult("/signin");
+		//else if (method.GetCustomAttribute<匿名访问Attribute>() == null && LoginUser == null)
+		//	context.Result = new RedirectResult("/signin");
+		//ViewBag.user = LoginUser;
+		#endregion
+		base.OnActionExecuting(context);
 	}
+	public override void OnActionExecuted(ActionExecutedContext context) {
+		if (context.Exception != null) {
+			#region 错误拦截，在这里记录日志
+			//this.Json(new APIReturn(-1, context.Exception.Message)).ExecuteResultAsync(context).Wait();
+			//context.Exception = null;
+			#endregion
+		}
+		base.OnActionExecuted(context);
+	}
+
+	#region 角色权限验证
+	//public bool sysrole_check(string url) {
+	//	url = url.ToLower();
+	//	//Response.Write(url + "<br>");
+	//	if (url == "/" || url.IndexOf("/default.aspx") == 0) return true;
+	//	foreach(var role in this.LoginUser.Obj_sysroles) {
+	//		//Response.Write(role.ToString());
+	//		foreach(var dir in role.Obj_sysdirs) {
+	//			//Response.Write("-----------------" + dir.ToString() + "<br>");
+	//			string tmp = dir.Url;
+	//			if (tmp.EndsWith("/")) tmp += "default.aspx";
+	//			if (url.IndexOf(tmp) == 0) return true;
+	//		}
+	//	}
+	//	return false;
+	//}
+	#endregion
 }
 
 #region 需要登陆、匿名访问
