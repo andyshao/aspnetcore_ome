@@ -59,20 +59,6 @@ public static class StarupExtensions {
 		return build;
 	}
 
-	public static IApplicationBuilder UseCustomizedStaticFiles(this IApplicationBuilder app, IList<ModuleInfo> modules) {
-		app.UseDefaultFiles();
-		app.UseStaticFiles(new StaticFileOptions() {
-			OnPrepareResponse = (context) => {
-				var headers = context.Context.Response.GetTypedHeaders();
-				headers.CacheControl = new CacheControlHeaderValue() {
-					Public = true,
-					MaxAge = TimeSpan.FromDays(60)
-				};
-			}
-		});
-		return app;
-	}
-
 	public static IServiceCollection AddCustomizedMvc(this IServiceCollection services, IList<ModuleInfo> modules) {
 		var mvcBuilder = services.AddMvc()
 			.AddRazorOptions(o => {
@@ -96,5 +82,19 @@ public static class StarupExtensions {
 		}
 
 		return services;
+	}
+
+	public static IApplicationBuilder UseCustomizedStaticFiles(this IApplicationBuilder app, IList<ModuleInfo> modules) {
+		app.UseDefaultFiles();
+		app.UseStaticFiles(new StaticFileOptions() {
+			OnPrepareResponse = (context) => {
+				var headers = context.Context.Response.GetTypedHeaders();
+				headers.CacheControl = new CacheControlHeaderValue() {
+					Public = true,
+					MaxAge = TimeSpan.FromDays(60)
+				};
+			}
+		});
+		return app;
 	}
 }
